@@ -1,5 +1,9 @@
 const express = require("express");
 const cors = require("cors");
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const ObjectId = require("mongodb").ObjectId;
+
+require("dotenv").config();
 
 const app = express();
 
@@ -8,11 +12,50 @@ app.use(express.json());
 
 const port = process.env.PORT || 5000;
 
+const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.4f4qc.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+
+async function run() {
+    try {
+        // connecting to mongodb
+        await client.connect();
+        const database = client.db("tasker");
+        const tasksCollection = database.collection("tasks");
+
+
+        // GET API's
+        app.get("/tasks", async (req, res) => {
+            const cursor = tasksCollection.find({});
+            const tasks = await cursor.toArray();
+            res.send(tasks);
+        });
+        app.get("/tasks/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { uid: id };
+            const cursor = await tasksCollection.find(query);
+            const tasks = await cursor.toArray();
+            res.json(tasks);
+        });
+
+        // POST API's
+        app.post("/addtask", async (req, res) => {
+            console.log(req.body);
+            const product = req.body;
+            const result = await tasksCollection.insertOne(product);
+            res.json(result);
+        });
+    } finally {
+        // await client.close();
+    }
+}
+
+run().catch(console.dir)
 
 
 app.get("/", (req, res) => {
     res.send(`server running on ${port}`)
 });
 app.listen(port, () => {
-    console.log(`http://localhost:${port}`, port);
+    console.log(`http://localhost:${port}`);
 })
