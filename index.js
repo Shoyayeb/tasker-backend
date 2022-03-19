@@ -45,6 +45,16 @@ async function run() {
             const result = await tasksCollection.insertOne(product);
             res.json(result);
         });
+
+        // DELETE API's
+        app.delete("/tasks/:id", async (req, res) => {
+            const id = req.params.id;
+            const querry = { _id: ObjectId(id) };
+            const result = await tasksCollection.deleteOne(querry);
+            console.log(result);
+            console.log("deleting task with id", id);
+            res.json(result);
+        });
     } finally {
         // await client.close();
     }
