@@ -46,6 +46,31 @@ async function run() {
             res.json(result);
         });
 
+        // PUT API's
+        app.put("/tasks/updateTask/:id", async (req, res) => {
+            const id = req.params.id;
+            const updatedTask = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    uid: updatedTask.uid,
+                    Done: updatedTask.Done,
+                    Importance: updatedTask.Importance,
+                    Time: updatedTask.Time,
+                    Date: updatedTask.Date,
+                    Task: updatedTask.Task,
+                },
+            };
+            const result = await tasksCollection.updateOne(
+                filter,
+                updateDoc,
+                options
+            );
+
+            res.send(result);
+        });
+
         // DELETE API's
         app.delete("/tasks/:id", async (req, res) => {
             const id = req.params.id;
