@@ -30,6 +30,11 @@ async function run() {
             const tasks = await cursor.toArray();
             res.send(tasks);
         });
+        app.get("/completedtasks", async (req, res) => {
+            const cursor = completedTasksCollection.find({});
+            const tasks = await cursor.toArray();
+            res.send(tasks);
+        });
         app.get("/tasks/:id", async (req, res) => {
             const id = req.params.id;
             const query = { uid: id };
@@ -47,15 +52,15 @@ async function run() {
         // POST API's
         app.post("/addtask", async (req, res) => {
             console.log(req.body);
-            const product = req.body;
-            const result = await tasksCollection.insertOne(product);
+            const task = req.body;
+            const result = await tasksCollection.insertOne(task);
             res.json(result);
         });
         // POST API's
         app.post("/addcompletedtask", async (req, res) => {
             console.log(req.body);
-            const product = req.body;
-            const result = await completedTasksCollection.insertOne(product);
+            const task = req.body;
+            const result = await completedTasksCollection.insertOne(task);
             res.json(result);
         });
 
