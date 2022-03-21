@@ -22,7 +22,7 @@ async function run() {
         await client.connect();
         const database = client.db("tasker");
         const tasksCollection = database.collection("tasks");
-
+        const completedTasksCollection = database.collection("completed");
 
         // GET API's
         app.get("/tasks", async (req, res) => {
@@ -51,6 +51,13 @@ async function run() {
             const result = await tasksCollection.insertOne(product);
             res.json(result);
         });
+        // POST API's
+        app.post("/addcompletedtask", async (req, res) => {
+            console.log(req.body);
+            const product = req.body;
+            const result = await completedTasksCollection.insertOne(product);
+            res.json(result);
+        });
 
         // PUT API's
         app.put("/tasks/updateTask/:id", async (req, res) => {
@@ -73,7 +80,6 @@ async function run() {
                 updateDoc,
                 options
             );
-
             res.send(result);
         });
 
