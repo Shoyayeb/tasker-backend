@@ -37,6 +37,12 @@ async function run() {
             const tasks = await cursor.toArray();
             res.json(tasks);
         });
+        app.get("/task/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const task = await tasksCollection.findOne(query);
+            res.json(task);
+        });
 
         // POST API's
         app.post("/addtask", async (req, res) => {
